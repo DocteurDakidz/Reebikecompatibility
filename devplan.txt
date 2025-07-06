@@ -6,9 +6,40 @@
 |---------|----------------------------------|----------------------------------|----------------------------------|----------|
 | 1.0     | Champ + bouton + affichage mock | API mock avec JSON local        | Tests unitaires JS + Python      | Oui      |
 | 1.1     | Autocomplétion locale            | Lecture CSV JSON local          | Matching simple                  | Oui      |
-| 1.2     | UI + messages clairs            | Intégration GeometryGeeks       | Tests API + fallback             | Oui      |
+| 1.2     | UI + messages clairs            | Intégration API GeometryGeeks   | Tests API + fallback             | Oui      |
 | 1.3     | UI responsive + CTA support     | Logs, sauvegarde anonymisée     | UX tests                         | Oui      |
 | 1.4     | Intégration Shopify App Option  | Mise en prod O2SWITCH API       | QA finale                        | Oui      |
+
+## 🔗 Sources de données : API GeometryGeeks
+
+### API GeometryGeeks
+- Site : https://geometrygeeks.bike
+- Type : API REST non officielle (retour JSON)
+- Endpoint principal : `https://geometrygeeks.bike/api/bikes`
+- Données utiles récupérables :
+  - `brand`
+  - `model`
+  - `year`
+  - `fork_spacing_mm`
+  - `wheel_axle_front`
+  - `down_tube_length_mm`
+  - `seat_tube_length_mm`
+  - `brake_type`
+- Remarque : certaines valeurs peuvent être absentes ou partielles → prévoir fallback JSON local
+
+## ✅ Matrice de compatibilité Reebike (version simplifiée)
+
+1. **Critères bloquants :**
+   - Si `wheel_axle_front` != "QR" ou `fork_spacing_mm` != 100 → **incompatible**
+
+2. **Compatibilité de base :**
+   - Si les deux critères ci-dessus sont valides → ✅ **Cosmopolit**
+
+3. **Compatibilité avancée :**
+   - Si `down_tube_length_mm >= 300` ou `seat_tube_length_mm >= 300` → ajouter ✅ **Urban** et ✅ **Explorer**
+
+4. **Données manquantes :**
+   - Si une des données est manquante → résultat = **unknown** avec le message : "Certaines données sont manquantes, contactez notre équipe."
 
 ## Backend – Réponses API types
 
@@ -17,7 +48,7 @@
   "status": "compatible",
   "kits": ["Cosmopolit", "Urban"],
   "recommendation_url": "/products/kit-urban",
-  "notes": "Compatible sous réserve d'un insert porte-gourde."
+  "notes": "Compatible si le cadre offre une longueur suffisante pour la batterie."
 }
 ```
 

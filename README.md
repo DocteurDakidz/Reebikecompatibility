@@ -77,7 +77,7 @@ Vérification de compatibilité
   "status": "compatible|unknown|incompatible",
   "kits": ["Cosmopolit", "Urban", "Explorer"],
   "recommendation_url": "/products/kit-urban",
-  "notes": "Description de la compatibilité"
+  "notes": "Compatible si le cadre offre une longueur suffisante pour la batterie."
 }
 ```
 
@@ -86,6 +86,23 @@ Vérification de l'état de l'API
 
 ### `GET /api/brands`
 Liste des marques disponibles
+
+## 🔗 Sources de données : API GeometryGeeks
+
+### API GeometryGeeks
+- Site : https://geometrygeeks.bike
+- Type : API REST non officielle (retour JSON)
+- Endpoint principal : `https://geometrygeeks.bike/api/bikes`
+- Données utiles récupérables :
+  - `brand`
+  - `model`
+  - `year`
+  - `fork_spacing_mm`
+  - `wheel_axle_front`
+  - `down_tube_length_mm`
+  - `seat_tube_length_mm`
+  - `brake_type`
+- Remarque : certaines valeurs peuvent être absentes ou partielles → prévoir fallback JSON local
 
 ## 🎨 Utilisation Shopify
 
@@ -109,8 +126,22 @@ Le widget utilise des classes CSS préfixées `.kit-compatibility-*` pour évite
 
 Le fichier `mock_bikes.json` contient :
 - 15 modèles de vélos de marques populaires
-- Spécifications techniques (axe, entraxe, longueur tube, etc.)
+- Spécifications techniques (axe, entraxe, longueur tubes, etc.)
 - Matrice de compatibilité pour les 3 kits Reebike
+
+## ✅ Matrice de compatibilité Reebike (version simplifiée)
+
+1. **Critères bloquants :**
+   - Si `wheel_axle_front` != "QR" ou `fork_spacing_mm` != 100 → **incompatible**
+
+2. **Compatibilité de base :**
+   - Si les deux critères ci-dessus sont valides → ✅ **Cosmopolit**
+
+3. **Compatibilité avancée :**
+   - Si `down_tube_length_mm >= 300` ou `seat_tube_length_mm >= 300` → ajouter ✅ **Urban** et ✅ **Explorer**
+
+4. **Données manquantes :**
+   - Si une des données est manquante → résultat = **unknown** avec le message : "Certaines données sont manquantes, contactez notre équipe."
 
 ## 🚦 États de compatibilité
 
@@ -125,7 +156,7 @@ Le fichier `mock_bikes.json` contient :
 - Message d'aide personnalisé
 
 ### Incompatible ❌
-- Vélo non compatible (axe traversant, entraxe non standard)
+- Vélo non compatible (axe traversant, entraxe non standard, longueur insuffisante)
 - Explication claire des raisons
 - Suggestions alternatives
 

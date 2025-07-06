@@ -31,19 +31,40 @@ Créer une section Shopify 2.0 qui permet aux clients de renseigner la marque et
 |------------------------|----------------------------------------|------------------|
 | wheel_axle_front       | Axe traversant ?                       | GeometryGeeks    |
 | fork_spacing_mm        | Entraxe avant                         | GeometryGeeks    |
-| down_tube_length_mm    | Longueur pour batterie (30cm mini)    | Partiellement    |
-| has_bottle_mount       | Insert porte-gourde                   | Base locale      |
+| down_tube_length_mm    | Longueur pour batterie (30cm mini)    | GeometryGeeks    |
+| seat_tube_length_mm    | Longueur alternative pour batterie    | GeometryGeeks    |
 | brake_type             | Type de frein (info non bloquante)    | GeometryGeeks    |
 
-## Matrice de compatibilité
+## ✅ Matrice de compatibilité Reebike (version simplifiée)
 
-1. Si `wheel_axle_front` != "QR" ou `fork_spacing_mm` != 100 → incompatible
-2. Si condition 1 OK → Compatible avec Cosmopolit
-3. Si en plus :
-   - `down_tube_length_mm >= 300`
-   - `has_bottle_mount == true`
-   → Ajouter Urban + Explorer
-4. Si l'une des données est absente → Incertitude (rediriger vers support)
+1. **Critères bloquants :**
+   - Si `wheel_axle_front` != "QR" ou `fork_spacing_mm` != 100 → **incompatible**
+
+2. **Compatibilité de base :**
+   - Si les deux critères ci-dessus sont valides → ✅ **Cosmopolit**
+
+3. **Compatibilité avancée :**
+   - Si `down_tube_length_mm >= 300` ou `seat_tube_length_mm >= 300` → ajouter ✅ **Urban** et ✅ **Explorer**
+
+4. **Données manquantes :**
+   - Si une des données est manquante → résultat = **unknown** avec le message : "Certaines données sont manquantes, contactez notre équipe."
+
+## 🔗 Sources de données : API GeometryGeeks
+
+### API GeometryGeeks
+- Site : https://geometrygeeks.bike
+- Type : API REST non officielle (retour JSON)
+- Endpoint principal : `https://geometrygeeks.bike/api/bikes`
+- Données utiles récupérables :
+  - `brand`
+  - `model`
+  - `year`
+  - `fork_spacing_mm`
+  - `wheel_axle_front`
+  - `down_tube_length_mm`
+  - `seat_tube_length_mm`
+  - `brake_type`
+- Remarque : certaines valeurs peuvent être absentes ou partielles → prévoir fallback JSON local
 
 ## Réponses API types
 
