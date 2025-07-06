@@ -1,0 +1,49 @@
+{% comment %}
+  Snippet pour inclure les styles CSS du widget de compatibilité
+  Usage: {% render 'kit-compatibility-styles' %}
+{% endcomment %}
+
+<style>
+  {{ 'custom-kit.css' | asset_url | stylesheet_tag }}
+</style>
+
+{% comment %}
+  Styles inline pour éviter les conflits avec le thème
+{% endcomment %}
+<style>
+  .kit-compatibility-section * {
+    box-sizing: border-box;
+  }
+  
+  .kit-compatibility-section {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    line-height: 1.5;
+  }
+  
+  .kit-compatibility-section button,
+  .kit-compatibility-section input {
+    font-family: inherit;
+  }
+  
+  .kit-compatibility-section a {
+    text-decoration: none;
+  }
+  
+  .kit-compatibility-section a:hover {
+    text-decoration: none;
+  }
+  
+  /* Reset margins pour éviter les conflits */
+  .kit-compatibility-section h1,
+  .kit-compatibility-section h2,
+  .kit-compatibility-section h3,
+  .kit-compatibility-section p {
+    margin: 0;
+  }
+  
+  /* Assurer la visibilité sur tous les thèmes */
+  .kit-compatibility-section {
+    position: relative;
+    z-index: 1;
+  }
+</style>
