@@ -1,0 +1,49 @@
+# DevPlan Reebike Compatibility Widget
+
+## Versioning (plan de développement)
+
+| Version | Frontend                        | Backend                         | Tests                            | Rollback |
+|---------|----------------------------------|----------------------------------|----------------------------------|----------|
+| 1.0     | Champ + bouton + affichage mock | API mock avec JSON local        | Tests unitaires JS + Python      | Oui      |
+| 1.1     | Autocomplétion locale            | Lecture CSV JSON local          | Matching simple                  | Oui      |
+| 1.2     | UI + messages clairs            | Intégration GeometryGeeks       | Tests API + fallback             | Oui      |
+| 1.3     | UI responsive + CTA support     | Logs, sauvegarde anonymisée     | UX tests                         | Oui      |
+| 1.4     | Intégration Shopify App Option  | Mise en prod O2SWITCH API       | QA finale                        | Oui      |
+
+## Backend – Réponses API types
+
+```json
+{
+  "status": "compatible",
+  "kits": ["Cosmopolit", "Urban"],
+  "recommendation_url": "/products/kit-urban",
+  "notes": "Compatible sous réserve d'un insert porte-gourde."
+}
+```
+
+```json
+{
+  "status": "unknown",
+  "kits": [],
+  "recommendation_url": null,
+  "notes": "Certaines données sont manquantes, contactez notre équipe."
+}
+```
+
+```json
+{
+  "status": "incompatible",
+  "kits": [],
+  "recommendation_url": null,
+  "notes": "Le vélo n'est pas compatible avec nos kits actuels."
+}
+```
+
+## Prochaine étape
+
+Développement de la version `v1.0` :
+- Section `.liquid` Shopify simple (formulaire)
+- `custom-kit.js` avec fetch JSON local
+- API Flask mock avec `mock_bikes.json`
+
+Livrables : JS, Liquid, CSS, JSON + `app.py`
