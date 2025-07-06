@@ -8,11 +8,15 @@ Flask API pour évaluer la compatibilité des vélos avec les kits Reebike
 
 from flask import Flask, request, jsonify
 from flask_cors import CORS
+from dotenv import load_dotenv
 import json
 import os
 import logging
 import requests
 from datetime import datetime
+
+# Load environment variables
+load_dotenv()
 
 # Configuration
 app = Flask(__name__)
