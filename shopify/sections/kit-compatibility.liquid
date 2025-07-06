@@ -1,6 +1,7 @@
 {% comment %}
   Section Shopify 2.0 - Widget de compatibilité Reebike
-  Version 1.0 - Mock avec données locales
+  Version 2.0 - 100% Shopify, aucun backend requis
+  Utilise GeometryGeeks API + données mock intégrées
 {% endcomment %}
 
 <div class="kit-compatibility-section">
@@ -18,6 +19,7 @@
           id="bike-input" 
           placeholder="Ex: Trek Domane SL 2023"
           class="bike-input"
+          autocomplete="off"
         >
         <small class="form-hint">Saisissez la marque suivie du modèle de votre vélo</small>
       </div>
@@ -42,10 +44,14 @@
   </div>
 </div>
 
+<!-- Chargement du JavaScript -->
+{{ 'custom-kit.js' | asset_url | script_tag }}
+
 <style>
 .kit-compatibility-section {
   padding: 2rem 0;
   background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
 
 .kit-compatibility-container {
@@ -64,24 +70,30 @@
   font-weight: 700;
   color: #1e293b;
   margin-bottom: 0.5rem;
+  line-height: 1.2;
 }
 
 .kit-compatibility-header p {
   color: #64748b;
   font-size: 1rem;
   line-height: 1.6;
+  max-width: 500px;
+  margin: 0 auto;
 }
 
 .kit-compatibility-form {
   background: white;
   padding: 2rem;
   border-radius: 12px;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
   margin-bottom: 1.5rem;
+  border: 1px solid #e2e8f0;
+  position: relative;
 }
 
 .form-group {
   margin-bottom: 1.5rem;
+  position: relative;
 }
 
 .form-group label {
@@ -89,6 +101,9 @@
   font-weight: 600;
   color: #374151;
   margin-bottom: 0.5rem;
+  font-size: 0.875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
 .bike-input {
@@ -97,13 +112,20 @@
   border: 2px solid #e5e7eb;
   border-radius: 8px;
   font-size: 1rem;
-  transition: border-color 0.2s ease;
+  transition: all 0.2s ease;
+  background: #fafafa;
+  box-sizing: border-box;
 }
 
 .bike-input:focus {
   outline: none;
   border-color: #3b82f6;
+  background: white;
   box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.bike-input::placeholder {
+  color: #9ca3af;
 }
 
 .form-hint {
@@ -111,6 +133,38 @@
   color: #6b7280;
   font-size: 0.875rem;
   margin-top: 0.25rem;
+  font-style: italic;
+}
+
+/* Autocomplétion */
+.bike-suggestions {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-top: none;
+  border-radius: 0 0 8px 8px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  z-index: 10;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.suggestion-item {
+  padding: 0.75rem 1rem;
+  cursor: pointer;
+  border-bottom: 1px solid #f3f4f6;
+  transition: background-color 0.2s ease;
+}
+
+.suggestion-item:hover {
+  background-color: #f8fafc;
+}
+
+.suggestion-item:last-child {
+  border-bottom: none;
 }
 
 .analyze-btn {
@@ -125,11 +179,19 @@
   cursor: pointer;
   transition: all 0.2s ease;
   position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
 }
 
-.analyze-btn:hover {
+.analyze-btn:hover:not(:disabled) {
   transform: translateY(-1px);
   box-shadow: 0 8px 25px rgba(59, 130, 246, 0.3);
+}
+
+.analyze-btn:active {
+  transform: translateY(0);
 }
 
 .analyze-btn:disabled {
@@ -145,23 +207,40 @@
   vertical-align: middle;
 }
 
+/* Results section */
 .compatibility-result {
   background: white;
   border-radius: 12px;
   padding: 1.5rem;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  border: 1px solid #e2e8f0;
+  animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .result-compatible {
   border-left: 4px solid #10b981;
+  background: linear-gradient(135deg, #ecfdf5 0%, #f0fdf4 100%);
 }
 
 .result-unknown {
   border-left: 4px solid #f59e0b;
+  background: linear-gradient(135deg, #fffbeb 0%, #fefce8 100%);
 }
 
 .result-incompatible {
   border-left: 4px solid #ef4444;
+  background: linear-gradient(135deg, #fef2f2 0%, #fef1f1 100%);
 }
 
 .result-header {
@@ -174,64 +253,115 @@
   width: 24px;
   height: 24px;
   margin-right: 0.75rem;
+  flex-shrink: 0;
 }
 
 .result-title {
   font-size: 1.25rem;
   font-weight: 700;
   margin: 0;
+  line-height: 1.2;
 }
 
 .result-kits {
   margin: 1rem 0;
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.5);
+  border-radius: 8px;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.result-kits strong {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: #374151;
+  font-size: 0.875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
 .kit-badge {
   display: inline-block;
-  background: #e0f2fe;
+  background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%);
   color: #0369a1;
-  padding: 0.25rem 0.75rem;
+  padding: 0.375rem 0.875rem;
   border-radius: 20px;
   font-size: 0.875rem;
-  font-weight: 500;
+  font-weight: 600;
   margin-right: 0.5rem;
   margin-bottom: 0.5rem;
+  border: 1px solid #7dd3fc;
+  transition: all 0.2s ease;
+}
+
+.kit-badge:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(3, 105, 161, 0.2);
 }
 
 .result-notes {
   color: #6b7280;
   font-size: 0.875rem;
-  line-height: 1.5;
-  margin-bottom: 1rem;
+  line-height: 1.6;
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 8px;
+  border-left: 3px solid #d1d5db;
+}
+
+.result-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
 }
 
 .result-cta {
   display: inline-block;
-  background: #059669;
+  background: linear-gradient(135deg, #059669 0%, #047857 100%);
   color: white;
   padding: 0.75rem 1.5rem;
   border-radius: 8px;
   text-decoration: none;
   font-weight: 600;
-  transition: background-color 0.2s ease;
+  font-size: 0.875rem;
+  transition: all 0.2s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
 .result-cta:hover {
-  background: #047857;
+  background: linear-gradient(135deg, #047857 0%, #065f46 100%);
   color: white;
+  transform: translateY(-1px);
+  box-shadow: 0 8px 25px rgba(5, 150, 105, 0.3);
 }
 
 .result-cta.secondary {
-  background: #f59e0b;
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
 }
 
 .result-cta.secondary:hover {
-  background: #d97706;
+  background: linear-gradient(135deg, #d97706 0%, #b45309 100%);
+  box-shadow: 0 8px 25px rgba(245, 158, 11, 0.3);
 }
 
+.data-source {
+  color: #9ca3af;
+  font-size: 0.75rem;
+  font-style: italic;
+}
+
+/* Responsive design */
 @media (max-width: 768px) {
   .kit-compatibility-section {
     padding: 1rem 0;
+  }
+  
+  .kit-compatibility-container {
+    padding: 0 0.75rem;
   }
   
   .kit-compatibility-form {
@@ -241,12 +371,113 @@
   .kit-compatibility-header h2 {
     font-size: 1.5rem;
   }
+  
+  .kit-compatibility-header p {
+    font-size: 0.875rem;
+  }
+  
+  .compatibility-result {
+    padding: 1.25rem;
+  }
+  
+  .result-header {
+    flex-direction: column;
+    align-items: flex-start;
+    text-align: left;
+  }
+  
+  .result-icon {
+    margin-bottom: 0.5rem;
+    margin-right: 0;
+  }
+  
+  .result-footer {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .result-cta {
+    text-align: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .kit-compatibility-form {
+    padding: 1rem;
+  }
+  
+  .kit-compatibility-header h2 {
+    font-size: 1.25rem;
+  }
+  
+  .kit-badge {
+    display: block;
+    margin-bottom: 0.5rem;
+    text-align: center;
+  }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .kit-compatibility-section {
+    background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+  }
+  
+  .kit-compatibility-header h2 {
+    color: #f1f5f9;
+  }
+  
+  .kit-compatibility-header p {
+    color: #cbd5e1;
+  }
+  
+  .kit-compatibility-form {
+    background: #334155;
+    border-color: #475569;
+  }
+  
+  .kit-compatibility-form .form-group label {
+    color: #e2e8f0;
+  }
+  
+  .kit-compatibility-form .bike-input {
+    background: #475569;
+    border-color: #64748b;
+    color: #f1f5f9;
+  }
+  
+  .kit-compatibility-form .bike-input::placeholder {
+    color: #94a3b8;
+  }
+  
+  .compatibility-result {
+    background: #334155;
+    border-color: #475569;
+  }
+  
+  .result-title {
+    color: #f1f5f9;
+  }
+  
+  .result-notes {
+    color: #cbd5e1;
+    background: rgba(0, 0, 0, 0.2);
+  }
+  
+  .bike-suggestions {
+    background: #334155;
+    border-color: #475569;
+  }
+  
+  .suggestion-item:hover {
+    background-color: #475569;
+  }
 }
 </style>
 
 {% schema %}
 {
-  "name": "Kit Compatibility Checker",
+  "name": "Kit Compatibility Checker v2.0",
   "tag": "section",
   "class": "section-kit-compatibility",
   "settings": [
@@ -263,23 +494,17 @@
       "default": "Renseignez la marque et le modèle de votre vélo pour découvrir quel kit Reebike vous convient."
     },
     {
-      "type": "text",
-      "id": "api_endpoint",
-      "label": "URL de l'API",
-      "default": "http://localhost:5000/api/compat",
-      "info": "URL de votre API backend hébergée (ex: https://monsite.com/api/compat)"
+      "type": "header",
+      "content": "Configuration avancée"
     },
     {
-      "type": "checkbox",
-      "id": "enable_mock",
-      "label": "Mode démo (données mock)",
-      "default": true,
-      "info": "Activer pour utiliser les données de démonstration"
+      "type": "paragraph",
+      "content": "Cette version utilise automatiquement l'API GeometryGeeks avec fallback sur une base de données intégrée. Aucune configuration supplémentaire requise."
     }
   ],
   "presets": [
     {
-      "name": "Kit Compatibility Checker"
+      "name": "Kit Compatibility Checker v2.0"
     }
   ]
 }
