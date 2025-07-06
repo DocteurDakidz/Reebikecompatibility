@@ -124,7 +124,7 @@ class TestCompatibilityAnalyzer(unittest.TestCase):
             'wheel_axle_front': 'QR',
             'fork_spacing_mm': 100,
             'down_tube_length_mm': 250,  # Too short for Urban/Explorer
-            'has_bottle_mount': False
+            'seat_tube_length_mm': 280   # Also too short
         }
         
         compatible_kits = analyzer.check_compatibility(bike_specs)
@@ -138,7 +138,20 @@ class TestCompatibilityAnalyzer(unittest.TestCase):
             'wheel_axle_front': 'QR',
             'fork_spacing_mm': 100,
             'down_tube_length_mm': 360,
-            'has_bottle_mount': True
+            'seat_tube_length_mm': 380
+        }
+        
+        compatible_kits = analyzer.check_compatibility(bike_specs)
+        self.assertIn('Cosmopolit', compatible_kits)
+        self.assertIn('Urban', compatible_kits)
+        self.assertIn('Explorer', compatible_kits)
+    
+    def test_compatibility_check_seat_tube_only(self):
+        """Test compatibility with only seat tube measurement"""
+        bike_specs = {
+            'wheel_axle_front': 'QR',
+            'fork_spacing_mm': 100,
+            'seat_tube_length_mm': 320  # Sufficient for Urban/Explorer
         }
         
         compatible_kits = analyzer.check_compatibility(bike_specs)
@@ -152,11 +165,17 @@ class TestCompatibilityAnalyzer(unittest.TestCase):
             'wheel_axle_front': 'Thru-axle',  # Incompatible
             'fork_spacing_mm': 100,
             'down_tube_length_mm': 350,
-            'has_bottle_mount': True
+            'seat_tube_length_mm': 380
         }
         
         compatible_kits = analyzer.check_compatibility(bike_specs)
         self.assertEqual(len(compatible_kits), 0)
+    
+    def test_missing_data_unknown_status(self):
+        """Test unknown status when data is missing"""
+        result = analyzer.analyze('Trek', 'Unknown Model')
+        self.assertEqual(result['status'], 'unknown')
+        self.assertEqual(result['notes'], 'Certaines données sont manquantes, contactez notre équipe.')
 
 if __name__ == '__main__':
     # Run tests

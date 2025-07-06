@@ -6,7 +6,7 @@
       "wheel_axle_front": "QR",
       "fork_spacing_mm": 100,
       "down_tube_length_mm": 320,
-      "has_bottle_mount": true,
+      "seat_tube_length_mm": 350,
       "brake_type": "Rim"
     },
     {
@@ -15,7 +15,7 @@
       "wheel_axle_front": "QR",
       "fork_spacing_mm": 100,
       "down_tube_length_mm": 280,
-      "has_bottle_mount": false,
+      "seat_tube_length_mm": 320,
       "brake_type": "Rim"
     },
     {
@@ -24,7 +24,7 @@
       "wheel_axle_front": "Thru-axle",
       "fork_spacing_mm": 100,
       "down_tube_length_mm": 340,
-      "has_bottle_mount": true,
+      "seat_tube_length_mm": 380,
       "brake_type": "Disc"
     },
     {
@@ -33,7 +33,7 @@
       "wheel_axle_front": "QR",
       "fork_spacing_mm": 100,
       "down_tube_length_mm": 330,
-      "has_bottle_mount": true,
+      "seat_tube_length_mm": 360,
       "brake_type": "Rim"
     },
     {
@@ -42,7 +42,7 @@
       "wheel_axle_front": "QR",
       "fork_spacing_mm": 100,
       "down_tube_length_mm": 290,
-      "has_bottle_mount": false,
+      "seat_tube_length_mm": 310,
       "brake_type": "Rim"
     },
     {
@@ -51,7 +51,7 @@
       "wheel_axle_front": "QR",
       "fork_spacing_mm": 130,
       "down_tube_length_mm": 300,
-      "has_bottle_mount": true,
+      "seat_tube_length_mm": 340,
       "brake_type": "Rim"
     },
     {
@@ -60,7 +60,7 @@
       "wheel_axle_front": "QR",
       "fork_spacing_mm": 100,
       "down_tube_length_mm": 350,
-      "has_bottle_mount": true,
+      "seat_tube_length_mm": 390,
       "brake_type": "Disc"
     },
     {
@@ -69,7 +69,7 @@
       "wheel_axle_front": "QR",
       "fork_spacing_mm": 100,
       "down_tube_length_mm": 270,
-      "has_bottle_mount": false,
+      "seat_tube_length_mm": 300,
       "brake_type": "Rim"
     },
     {
@@ -78,7 +78,7 @@
       "wheel_axle_front": "QR",
       "fork_spacing_mm": 100,
       "down_tube_length_mm": 325,
-      "has_bottle_mount": true,
+      "seat_tube_length_mm": 365,
       "brake_type": "Disc"
     },
     {
@@ -87,7 +87,7 @@
       "wheel_axle_front": "Thru-axle",
       "fork_spacing_mm": 100,
       "down_tube_length_mm": 310,
-      "has_bottle_mount": true,
+      "seat_tube_length_mm": 350,
       "brake_type": "Disc"
     },
     {
@@ -96,7 +96,7 @@
       "wheel_axle_front": "QR",
       "fork_spacing_mm": 100,
       "down_tube_length_mm": 305,
-      "has_bottle_mount": true,
+      "seat_tube_length_mm": 345,
       "brake_type": "Rim"
     },
     {
@@ -105,7 +105,7 @@
       "wheel_axle_front": "QR",
       "fork_spacing_mm": 100,
       "down_tube_length_mm": 315,
-      "has_bottle_mount": false,
+      "seat_tube_length_mm": 355,
       "brake_type": "Rim"
     },
     {
@@ -114,7 +114,7 @@
       "wheel_axle_front": "Thru-axle",
       "fork_spacing_mm": 100,
       "down_tube_length_mm": 320,
-      "has_bottle_mount": true,
+      "seat_tube_length_mm": 360,
       "brake_type": "Disc"
     },
     {
@@ -123,7 +123,7 @@
       "wheel_axle_front": "QR",
       "fork_spacing_mm": 100,
       "down_tube_length_mm": 295,
-      "has_bottle_mount": false,
+      "seat_tube_length_mm": 335,
       "brake_type": "Rim"
     },
     {
@@ -132,7 +132,7 @@
       "wheel_axle_front": "QR",
       "fork_spacing_mm": 100,
       "down_tube_length_mm": 340,
-      "has_bottle_mount": true,
+      "seat_tube_length_mm": 380,
       "brake_type": "Disc"
     }
   ],
@@ -151,8 +151,7 @@
         "requirements": {
           "wheel_axle_front": "QR",
           "fork_spacing_mm": 100,
-          "min_down_tube_length_mm": 300,
-          "has_bottle_mount": true
+          "min_tube_length_mm": 300
         },
         "price_range": "1200-1600€"
       },
@@ -161,8 +160,7 @@
         "requirements": {
           "wheel_axle_front": "QR",
           "fork_spacing_mm": 100,
-          "min_down_tube_length_mm": 350,
-          "has_bottle_mount": true
+          "min_tube_length_mm": 300
         },
         "price_range": "1600-2000€"
       }
@@ -176,6 +174,10 @@
         {
           "condition": "fork_spacing_mm != 100",
           "reason": "Entraxe de fourche non standard"
+        },
+        {
+          "condition": "down_tube_length_mm < 300 AND seat_tube_length_mm < 300",
+          "reason": "Longueur de tube insuffisante pour la batterie"
         }
       ]
     }

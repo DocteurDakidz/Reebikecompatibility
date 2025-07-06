@@ -59,16 +59,14 @@ class CompatibilityAnalyzer:
                 'requirements': {
                     'wheel_axle_front': 'QR',
                     'fork_spacing_mm': 100,
-                    'min_down_tube_length_mm': 300,
-                    'has_bottle_mount': True
+                    'min_tube_length_mm': 300  # down_tube OR seat_tube
                 }
             },
             'Explorer': {
                 'requirements': {
                     'wheel_axle_front': 'QR',
                     'fork_spacing_mm': 100,
-                    'min_down_tube_length_mm': 350,
-                    'has_bottle_mount': True
+                    'min_tube_length_mm': 300  # down_tube OR seat_tube
                 }
             }
         }
@@ -89,27 +87,64 @@ class CompatibilityAnalyzer:
         """Check which kits are compatible with given bike specs"""
         compatible_kits = []
         
-        for kit_name, kit_info in self.kits.items():
-            if self._is_kit_compatible(bike_specs, kit_info['requirements']):
-                compatible_kits.append(kit_name)
+        # Check basic requirements first (blocking criteria)
+        if not self._meets_basic_requirements(bike_specs):
+            return []
+        
+        # Cosmopolit is always compatible if basic requirements are met
+        compatible_kits.append('Cosmopolit')
+        
+        # Check for Urban and Explorer compatibility
+        if self._meets_advanced_requirements(bike_specs):
+            compatible_kits.extend(['Urban', 'Explorer'])
         
         return compatible_kits
     
-    def _is_kit_compatible(self, bike_specs, requirements):
-        """Check if bike meets kit requirements"""
-        for req_key, req_value in requirements.items():
-            bike_value = bike_specs.get(req_key)
-            
-            if bike_value is None:
-                return False  # Missing required data
-            
-            if req_key.startswith('min_') and isinstance(req_value, (int, float)):
-                if bike_value < req_value:
-                    return False
-            elif bike_value != req_value:
-                return False
+    def _meets_basic_requirements(self, bike_specs):
+        """Check if bike meets basic requirements (blocking criteria)"""
+        wheel_axle = bike_specs.get('wheel_axle_front')
+        fork_spacing = bike_specs.get('fork_spacing_mm')
+        
+        # Missing critical data
+        if wheel_axle is None or fork_spacing is None:
+            return False
+        
+        # Check blocking criteria
+        if wheel_axle != 'QR' or fork_spacing != 100:
+            return False
         
         return True
+    
+    def _meets_advanced_requirements(self, bike_specs):
+        """Check if bike meets advanced requirements for Urban/Explorer"""
+        down_tube = bike_specs.get('down_tube_length_mm')
+        seat_tube = bike_specs.get('seat_tube_length_mm')
+        
+        # Need at least one tube measurement
+        if down_tube is None and seat_tube is None:
+            return False
+        
+        # Check if either tube is long enough (300mm minimum)
+        if down_tube is not None and down_tube >= 300:
+            return True
+        if seat_tube is not None and seat_tube >= 300:
+            return True
+        
+        return False
+    
+    def _has_missing_data(self, bike_specs):
+        """Check if bike has missing critical data"""
+        required_fields = ['wheel_axle_front', 'fork_spacing_mm']
+        optional_fields = ['down_tube_length_mm', 'seat_tube_length_mm']
+        
+        # Check required fields
+        for field in required_fields:
+            if bike_specs.get(field) is None:
+                return True
+        
+        # Check if we have at least one tube measurement
+        has_tube_data = any(bike_specs.get(field) is not None for field in optional_fields)
+        return not has_tube_data
     
     def analyze(self, brand, model):
         """Main analysis method"""
@@ -119,6 +154,15 @@ class CompatibilityAnalyzer:
         if not bike:
             return self._handle_unknown_bike(brand, model)
         
+        # Check for missing data
+        if self._has_missing_data(bike):
+            return {
+                'status': 'unknown',
+                'kits': [],
+                'recommendation_url': None,
+                'notes': "Certaines données sont manquantes, contactez notre équipe."
+            }
+        
         # Check compatibility
         compatible_kits = self.check_compatibility(bike)
         
@@ -127,7 +171,7 @@ class CompatibilityAnalyzer:
                 'status': 'incompatible',
                 'kits': [],
                 'recommendation_url': None,
-                'notes': f"Le {brand} {model} n'est pas compatible avec nos kits actuels en raison de sa géométrie spécifique."
+                'notes': f"Le {brand} {model} n'est pas compatible avec nos kits actuels (axe traversant ou entraxe non standard)."
             }
         
         # Generate recommendation URL
@@ -150,9 +194,9 @@ class CompatibilityAnalyzer:
         known_brands = set(bike.get('brand', '').lower() for bike in self.data.get('bikes', []))
         
         if brand.lower() in known_brands:
-            notes = f"Nous connaissons la marque {brand} mais pas ce modèle spécifique ({model}). Notre équipe peut vous aider à déterminer la compatibilité."
+            notes = f"Nous connaissons la marque {brand} mais pas ce modèle spécifique ({model}). Certaines données sont manquantes, contactez notre équipe."
         else:
-            notes = f"Marque {brand} ou modèle {model} non reconnu dans notre base de données. Contactez notre équipe pour une analyse personnalisée."
+            notes = "Certaines données sont manquantes, contactez notre équipe."
         
         return {
             'status': 'unknown',
@@ -168,13 +212,9 @@ class CompatibilityAnalyzer:
         if len(compatible_kits) == len(self.kits):
             notes.append("Excellente compatibilité ! Votre vélo est compatible avec tous nos kits.")
         elif len(compatible_kits) > 1:
-            notes.append(f"Votre vélo est compatible avec {len(compatible_kits)} de nos kits.")
+            notes.append("Compatible si le cadre offre une longueur suffisante pour la batterie.")
         else:
-            notes.append("Compatibilité confirmée avec notre kit de base.")
-        
-        # Add specific notes based on bike characteristics
-        if bike.get('has_bottle_mount'):
-            notes.append("Présence d'inserts porte-gourde détectée.")
+            notes.append("Compatible si le cadre offre une longueur suffisante pour la batterie.")
         
         if bike.get('brake_type'):
             notes.append(f"Type de freins : {bike['brake_type']}.")

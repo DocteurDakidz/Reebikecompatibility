@@ -92,22 +92,22 @@ class KitCompatibilityWidget {
     // Mock data for demonstration
     const mockDatabase = {
       'trek': {
-        'domane': { status: 'compatible', kits: ['Cosmopolit', 'Urban'], notes: 'Compatible avec tous nos kits. Vélo idéal pour la conversion électrique.' },
-        'emonda': { status: 'compatible', kits: ['Cosmopolit'], notes: 'Compatible avec le kit Cosmopolit. Le cadre carbone nécessite une attention particulière.' },
-        'madone': { status: 'unknown', kits: [], notes: 'Modèle spécifique nécessitant une vérification manuelle.' }
+        'domane': { status: 'compatible', kits: ['Cosmopolit', 'Urban', 'Explorer'], notes: 'Compatible si le cadre offre une longueur suffisante pour la batterie.' },
+        'emonda': { status: 'compatible', kits: ['Cosmopolit', 'Urban', 'Explorer'], notes: 'Compatible si le cadre offre une longueur suffisante pour la batterie.' },
+        'madone': { status: 'incompatible', kits: [], notes: 'Le vélo n\'est pas compatible avec nos kits actuels (axe traversant ou entraxe non standard).' }
       },
       'specialized': {
-        'roubaix': { status: 'compatible', kits: ['Cosmopolit', 'Urban'], notes: 'Excellente compatibilité. Géométrie parfaite pour nos kits.' },
-        'tarmac': { status: 'compatible', kits: ['Cosmopolit'], notes: 'Compatible avec le kit Cosmopolit uniquement.' },
-        'allez': { status: 'incompatible', kits: [], notes: 'Géométrie non compatible avec nos kits actuels.' }
+        'roubaix': { status: 'compatible', kits: ['Cosmopolit', 'Urban', 'Explorer'], notes: 'Compatible si le cadre offre une longueur suffisante pour la batterie.' },
+        'tarmac': { status: 'compatible', kits: ['Cosmopolit', 'Urban', 'Explorer'], notes: 'Compatible si le cadre offre une longueur suffisante pour la batterie.' },
+        'allez': { status: 'incompatible', kits: [], notes: 'Le vélo n\'est pas compatible avec nos kits actuels (axe traversant ou entraxe non standard).' }
       },
       'giant': {
-        'defy': { status: 'compatible', kits: ['Cosmopolit', 'Urban', 'Explorer'], notes: 'Compatible avec tous nos kits. Configuration optimale.' },
-        'tcr': { status: 'unknown', kits: [], notes: 'Modèle nécessitant une analyse approfondie.' }
+        'defy': { status: 'compatible', kits: ['Cosmopolit', 'Urban', 'Explorer'], notes: 'Compatible si le cadre offre une longueur suffisante pour la batterie.' },
+        'tcr': { status: 'unknown', kits: [], notes: 'Certaines données sont manquantes, contactez notre équipe.' }
       },
       'cannondale': {
-        'synapse': { status: 'compatible', kits: ['Cosmopolit', 'Urban'], notes: 'Très bonne compatibilité. Cadre aluminium idéal.' },
-        'supersix': { status: 'incompatible', kits: [], notes: 'Cadre carbone non compatible avec nos systèmes de fixation.' }
+        'synapse': { status: 'compatible', kits: ['Cosmopolit', 'Urban', 'Explorer'], notes: 'Compatible si le cadre offre une longueur suffisante pour la batterie.' },
+        'supersix': { status: 'incompatible', kits: [], notes: 'Le vélo n\'est pas compatible avec nos kits actuels (axe traversant ou entraxe non standard).' }
       }
     };
 
@@ -128,7 +128,7 @@ class KitCompatibilityWidget {
         status: 'unknown',
         kits: [],
         recommendation_url: null,
-        notes: `Nous connaissons la marque ${brand} mais pas ce modèle spécifique. Notre équipe peut vous aider à déterminer la compatibilité.`
+        notes: 'Certaines données sont manquantes, contactez notre équipe.'
       };
     }
 
@@ -137,7 +137,7 @@ class KitCompatibilityWidget {
       status: 'unknown',
       kits: [],
       recommendation_url: null,
-      notes: 'Marque ou modèle non reconnu. Contactez notre équipe pour une analyse personnalisée.'
+      notes: 'Certaines données sont manquantes, contactez notre équipe.'
     };
   }
 
