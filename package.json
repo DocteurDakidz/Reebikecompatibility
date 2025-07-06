@@ -1,0 +1,31 @@
+{
+  "name": "reebike-compatibility-widget",
+  "version": "1.0.0",
+  "description": "Widget de compatibilité Reebike pour Shopify 2.0",
+  "main": "shopify/assets/custom-kit.js",
+  "scripts": {
+    "test": "jest tests/test_frontend.js",
+    "test:backend": "cd backend && python -m pytest test_compatibility.py -v",
+    "dev:backend": "cd backend && python app.py",
+    "install:backend": "cd backend && pip install -r requirements.txt",
+    "lint": "eslint shopify/assets/custom-kit.js",
+    "build": "echo 'No build step required for v1.0'"
+  },
+  "keywords": [
+    "shopify",
+    "compatibility",
+    "bike",
+    "electric",
+    "widget"
+  ],
+  "author": "Reebike",
+  "license": "MIT",
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "eslint": "^8.55.0"
+  },
+  "jest": {
+    "testEnvironment": "jsdom",
+    "setupFilesAfterEnv": ["<rootDir>/tests/setup.js"]
+  }
+}

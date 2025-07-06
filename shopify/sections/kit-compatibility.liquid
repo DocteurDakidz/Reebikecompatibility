@@ -1,0 +1,278 @@
+{% comment %}
+  Section Shopify 2.0 - Widget de compatibilité Reebike
+  Version 1.0 - Mock avec données locales
+{% endcomment %}
+
+<div class="kit-compatibility-section">
+  <div class="kit-compatibility-container">
+    <div class="kit-compatibility-header">
+      <h2>{{ section.settings.title | default: "Vérifiez la compatibilité de votre vélo" }}</h2>
+      <p>{{ section.settings.description | default: "Renseignez la marque et le modèle de votre vélo pour découvrir quel kit Reebike vous convient." }}</p>
+    </div>
+
+    <div class="kit-compatibility-form">
+      <div class="form-group">
+        <label for="bike-input">Marque et modèle de votre vélo</label>
+        <input 
+          type="text" 
+          id="bike-input" 
+          placeholder="Ex: Trek Domane SL 2023"
+          class="bike-input"
+        >
+        <small class="form-hint">Saisissez la marque suivie du modèle de votre vélo</small>
+      </div>
+      
+      <button type="button" id="analyze-btn" class="analyze-btn">
+        <span class="btn-text">Analyser la compatibilité</span>
+        <span class="btn-loader" style="display: none;">
+          <svg class="spinner" viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" fill="none" stroke-dasharray="31.416" stroke-dashoffset="31.416">
+              <animate attributeName="stroke-dasharray" dur="2s" values="0 31.416;15.708 15.708;0 31.416" repeatCount="indefinite"/>
+              <animate attributeName="stroke-dashoffset" dur="2s" values="0;-15.708;-31.416" repeatCount="indefinite"/>
+            </circle>
+          </svg>
+          Analyse en cours...
+        </span>
+      </button>
+    </div>
+
+    <div id="compatibility-result" class="compatibility-result" style="display: none;">
+      <!-- Résultat dynamique injecté par JS -->
+    </div>
+  </div>
+</div>
+
+<style>
+.kit-compatibility-section {
+  padding: 2rem 0;
+  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+}
+
+.kit-compatibility-container {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+.kit-compatibility-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.kit-compatibility-header h2 {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin-bottom: 0.5rem;
+}
+
+.kit-compatibility-header p {
+  color: #64748b;
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
+.kit-compatibility-form {
+  background: white;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  margin-bottom: 1.5rem;
+}
+
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+.form-group label {
+  display: block;
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 0.5rem;
+}
+
+.bike-input {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 2px solid #e5e7eb;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: border-color 0.2s ease;
+}
+
+.bike-input:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.form-hint {
+  display: block;
+  color: #6b7280;
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
+}
+
+.analyze-btn {
+  width: 100%;
+  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+  color: white;
+  border: none;
+  padding: 0.875rem 1.5rem;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.analyze-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 25px rgba(59, 130, 246, 0.3);
+}
+
+.analyze-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.spinner {
+  width: 20px;
+  height: 20px;
+  margin-right: 0.5rem;
+  vertical-align: middle;
+}
+
+.compatibility-result {
+  background: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.result-compatible {
+  border-left: 4px solid #10b981;
+}
+
+.result-unknown {
+  border-left: 4px solid #f59e0b;
+}
+
+.result-incompatible {
+  border-left: 4px solid #ef4444;
+}
+
+.result-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.result-icon {
+  width: 24px;
+  height: 24px;
+  margin-right: 0.75rem;
+}
+
+.result-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+.result-kits {
+  margin: 1rem 0;
+}
+
+.kit-badge {
+  display: inline-block;
+  background: #e0f2fe;
+  color: #0369a1;
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  margin-right: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.result-notes {
+  color: #6b7280;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  margin-bottom: 1rem;
+}
+
+.result-cta {
+  display: inline-block;
+  background: #059669;
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: 600;
+  transition: background-color 0.2s ease;
+}
+
+.result-cta:hover {
+  background: #047857;
+  color: white;
+}
+
+.result-cta.secondary {
+  background: #f59e0b;
+}
+
+.result-cta.secondary:hover {
+  background: #d97706;
+}
+
+@media (max-width: 768px) {
+  .kit-compatibility-section {
+    padding: 1rem 0;
+  }
+  
+  .kit-compatibility-form {
+    padding: 1.5rem;
+  }
+  
+  .kit-compatibility-header h2 {
+    font-size: 1.5rem;
+  }
+}
+</style>
+
+{% schema %}
+{
+  "name": "Kit Compatibility Checker",
+  "tag": "section",
+  "class": "section-kit-compatibility",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Titre de la section",
+      "default": "Vérifiez la compatibilité de votre vélo"
+    },
+    {
+      "type": "textarea",
+      "id": "description",
+      "label": "Description",
+      "default": "Renseignez la marque et le modèle de votre vélo pour découvrir quel kit Reebike vous convient."
+    },
+    {
+      "type": "url",
+      "id": "api_endpoint",
+      "label": "URL de l'API",
+      "default": "/api/compat"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Kit Compatibility Checker"
+    }
+  ]
+}
+{% endschema %}

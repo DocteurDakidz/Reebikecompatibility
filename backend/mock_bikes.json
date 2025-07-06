@@ -1,0 +1,189 @@
+{
+  "bikes": [
+    {
+      "brand": "Trek",
+      "model": "Domane SL 2023",
+      "wheel_axle_front": "QR",
+      "fork_spacing_mm": 100,
+      "down_tube_length_mm": 320,
+      "has_bottle_mount": true,
+      "brake_type": "Rim"
+    },
+    {
+      "brand": "Trek",
+      "model": "Emonda ALR 2022",
+      "wheel_axle_front": "QR",
+      "fork_spacing_mm": 100,
+      "down_tube_length_mm": 280,
+      "has_bottle_mount": false,
+      "brake_type": "Rim"
+    },
+    {
+      "brand": "Trek",
+      "model": "Madone SLR 2023",
+      "wheel_axle_front": "Thru-axle",
+      "fork_spacing_mm": 100,
+      "down_tube_length_mm": 340,
+      "has_bottle_mount": true,
+      "brake_type": "Disc"
+    },
+    {
+      "brand": "Specialized",
+      "model": "Roubaix Sport 2023",
+      "wheel_axle_front": "QR",
+      "fork_spacing_mm": 100,
+      "down_tube_length_mm": 330,
+      "has_bottle_mount": true,
+      "brake_type": "Rim"
+    },
+    {
+      "brand": "Specialized",
+      "model": "Tarmac SL6 2022",
+      "wheel_axle_front": "QR",
+      "fork_spacing_mm": 100,
+      "down_tube_length_mm": 290,
+      "has_bottle_mount": false,
+      "brake_type": "Rim"
+    },
+    {
+      "brand": "Specialized",
+      "model": "Allez Elite 2021",
+      "wheel_axle_front": "QR",
+      "fork_spacing_mm": 130,
+      "down_tube_length_mm": 300,
+      "has_bottle_mount": true,
+      "brake_type": "Rim"
+    },
+    {
+      "brand": "Giant",
+      "model": "Defy Advanced 2023",
+      "wheel_axle_front": "QR",
+      "fork_spacing_mm": 100,
+      "down_tube_length_mm": 350,
+      "has_bottle_mount": true,
+      "brake_type": "Disc"
+    },
+    {
+      "brand": "Giant",
+      "model": "TCR Advanced 2022",
+      "wheel_axle_front": "QR",
+      "fork_spacing_mm": 100,
+      "down_tube_length_mm": 270,
+      "has_bottle_mount": false,
+      "brake_type": "Rim"
+    },
+    {
+      "brand": "Cannondale",
+      "model": "Synapse Carbon 2023",
+      "wheel_axle_front": "QR",
+      "fork_spacing_mm": 100,
+      "down_tube_length_mm": 325,
+      "has_bottle_mount": true,
+      "brake_type": "Disc"
+    },
+    {
+      "brand": "Cannondale",
+      "model": "SuperSix EVO 2022",
+      "wheel_axle_front": "Thru-axle",
+      "fork_spacing_mm": 100,
+      "down_tube_length_mm": 310,
+      "has_bottle_mount": true,
+      "brake_type": "Disc"
+    },
+    {
+      "brand": "Scott",
+      "model": "Addict RC 2023",
+      "wheel_axle_front": "QR",
+      "fork_spacing_mm": 100,
+      "down_tube_length_mm": 305,
+      "has_bottle_mount": true,
+      "brake_type": "Rim"
+    },
+    {
+      "brand": "Bianchi",
+      "model": "Oltre XR4 2022",
+      "wheel_axle_front": "QR",
+      "fork_spacing_mm": 100,
+      "down_tube_length_mm": 315,
+      "has_bottle_mount": false,
+      "brake_type": "Rim"
+    },
+    {
+      "brand": "Pinarello",
+      "model": "Dogma F12 2023",
+      "wheel_axle_front": "Thru-axle",
+      "fork_spacing_mm": 100,
+      "down_tube_length_mm": 320,
+      "has_bottle_mount": true,
+      "brake_type": "Disc"
+    },
+    {
+      "brand": "Cervelo",
+      "model": "R5 2022",
+      "wheel_axle_front": "QR",
+      "fork_spacing_mm": 100,
+      "down_tube_length_mm": 295,
+      "has_bottle_mount": false,
+      "brake_type": "Rim"
+    },
+    {
+      "brand": "BMC",
+      "model": "Roadmachine 2023",
+      "wheel_axle_front": "QR",
+      "fork_spacing_mm": 100,
+      "down_tube_length_mm": 340,
+      "has_bottle_mount": true,
+      "brake_type": "Disc"
+    }
+  ],
+  "compatibility_matrix": {
+    "kits": {
+      "Cosmopolit": {
+        "description": "Kit de base pour conversion électrique",
+        "requirements": {
+          "wheel_axle_front": "QR",
+          "fork_spacing_mm": 100
+        },
+        "price_range": "800-1200€"
+      },
+      "Urban": {
+        "description": "Kit urbain avec batterie intégrée",
+        "requirements": {
+          "wheel_axle_front": "QR",
+          "fork_spacing_mm": 100,
+          "min_down_tube_length_mm": 300,
+          "has_bottle_mount": true
+        },
+        "price_range": "1200-1600€"
+      },
+      "Explorer": {
+        "description": "Kit longue distance avec grande autonomie",
+        "requirements": {
+          "wheel_axle_front": "QR",
+          "fork_spacing_mm": 100,
+          "min_down_tube_length_mm": 350,
+          "has_bottle_mount": true
+        },
+        "price_range": "1600-2000€"
+      }
+    },
+    "rules": {
+      "incompatible_conditions": [
+        {
+          "condition": "wheel_axle_front != 'QR'",
+          "reason": "Axe traversant non compatible avec nos systèmes de fixation"
+        },
+        {
+          "condition": "fork_spacing_mm != 100",
+          "reason": "Entraxe de fourche non standard"
+        }
+      ]
+    }
+  },
+  "metadata": {
+    "version": "1.0",
+    "last_updated": "2024-01-15",
+    "total_bikes": 15,
+    "supported_brands": ["Trek", "Specialized", "Giant", "Cannondale", "Scott", "Bianchi", "Pinarello", "Cervelo", "BMC"]
+  }
+}
