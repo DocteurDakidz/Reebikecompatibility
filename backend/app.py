@@ -11,6 +11,7 @@ from flask_cors import CORS
 import json
 import os
 import logging
+import requests
 from datetime import datetime
 
 # Configuration
@@ -43,11 +44,77 @@ def load_mock_data():
 # Global data
 mock_data = load_mock_data()
 
+class GeometryGeeksAPI:
+    """Interface with GeometryGeeks API"""
+    
+    def __init__(self):
+        self.base_url = "https://geometrygeeks.bike/api"
+        self.timeout = 5  # seconds
+        
+    def search_bike(self, brand, model):
+        """Search for bike data on GeometryGeeks"""
+        try:
+            # Try to search for the bike
+            params = {
+                'brand': brand,
+                'model': model
+            }
+            
+            response = requests.get(
+                f"{self.base_url}/bikes",
+                params=params,
+                timeout=self.timeout,
+                headers={'User-Agent': 'Reebike-Compatibility-Widget/1.0'}
+            )
+            
+            if response.status_code == 200:
+                data = response.json()
+                return self.parse_geometry_geeks_data(data, brand, model)
+            else:
+                logger.warning(f"GeometryGeeks API returned {response.status_code}")
+                return None
+                
+        except requests.exceptions.RequestException as e:
+            logger.warning(f"GeometryGeeks API error: {str(e)}")
+            return None
+        except Exception as e:
+            logger.error(f"Unexpected error calling GeometryGeeks: {str(e)}")
+            return None
+    
+    def parse_geometry_geeks_data(self, data, brand, model):
+        """Parse GeometryGeeks response and extract relevant data"""
+        try:
+            # GeometryGeeks might return a list of bikes
+            bikes = data if isinstance(data, list) else data.get('bikes', [])
+            
+            # Find the best match
+            for bike in bikes:
+                if (bike.get('brand', '').lower() == brand.lower() and 
+                    model.lower() in bike.get('model', '').lower()):
+                    
+                    return {
+                        'brand': bike.get('brand'),
+                        'model': bike.get('model'),
+                        'year': bike.get('year'),
+                        'wheel_axle_front': bike.get('wheel_axle_front'),
+                        'fork_spacing_mm': bike.get('fork_spacing_mm'),
+                        'down_tube_length_mm': bike.get('down_tube_length_mm'),
+                        'seat_tube_length_mm': bike.get('seat_tube_length_mm'),
+                        'brake_type': bike.get('brake_type'),
+                        'source': 'geometrygeeks'
+                    }
+            
+            return None
+            
+        except Exception as e:
+            logger.error(f"Error parsing GeometryGeeks data: {str(e)}")
+            return None
 class CompatibilityAnalyzer:
     """Analyze bike compatibility with Reebike kits"""
     
     def __init__(self, data):
         self.data = data
+        self.geometry_geeks = GeometryGeeksAPI()
         self.kits = {
             'Cosmopolit': {
                 'requirements': {
@@ -73,12 +140,21 @@ class CompatibilityAnalyzer:
     
     def find_bike(self, brand, model):
         """Find bike in database"""
+        # First try GeometryGeeks API
+        geometry_bike = self.geometry_geeks.search_bike(brand, model)
+        if geometry_bike:
+            logger.info(f"Found bike data from GeometryGeeks: {brand} {model}")
+            return geometry_bike
+        
+        # Fallback to local data
+        logger.info(f"Falling back to local data for: {brand} {model}")
         brand_lower = brand.lower().strip()
         model_lower = model.lower().strip()
         
         for bike in self.data.get('bikes', []):
             if (bike.get('brand', '').lower() == brand_lower and 
                 model_lower in bike.get('model', '').lower()):
+                bike['source'] = 'local'
                 return bike
         
         return None
@@ -242,11 +318,16 @@ def check_compatibility():
         # Log request
         logger.info(f"Compatibility check: {brand} {model}")
         
+        # Add source info to response
+        bike = analyzer.find_bike(brand, model)
+        source = bike.get('source', 'unknown') if bike else 'not_found'
+        
         # Analyze compatibility
         result = analyzer.analyze(brand, model)
+        result['data_source'] = source
         
         # Log result
-        logger.info(f"Result: {result['status']} - {len(result['kits'])} kits")
+        logger.info(f"Result: {result['status']} - {len(result['kits'])} kits - Source: {source}")
         
         return jsonify(result)
     

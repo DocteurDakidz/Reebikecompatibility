@@ -78,8 +78,24 @@ class KitCompatibilityWidget {
   }
 
   async callCompatibilityAPI(brand, model) {
-    // Version 1.0: Mock API call with local JSON
-    // In production, this would be: fetch(`${this.apiEndpoint}?brand=${brand}&model=${model}`)
+    // Try real API first, fallback to mock if needed
+    try {
+      const response = await fetch(`${this.apiEndpoint}?brand=${encodeURIComponent(brand)}&model=${encodeURIComponent(model)}`);
+      
+      if (response.ok) {
+        return await response.json();
+      } else {
+        console.warn('API call failed, using mock data');
+        return this.getMockResponse(brand.toLowerCase(), model.toLowerCase());
+      }
+    } catch (error) {
+      console.warn('API call error, using mock data:', error);
+      return this.getMockResponse(brand.toLowerCase(), model.toLowerCase());
+    }
+  }
+
+  async callCompatibilityAPIMock(brand, model) {
+    // Fallback mock implementation
     
     // Simulate API delay
     await new Promise(resolve => setTimeout(resolve, 1500));

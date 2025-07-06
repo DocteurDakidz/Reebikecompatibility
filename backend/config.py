@@ -35,8 +35,9 @@ class Config:
     MOCK_DATA_FILE = os.environ.get('MOCK_DATA_FILE', 'mock_bikes.json')
     
     # External APIs
-    GEOMETRY_GEEKS_API_KEY = os.environ.get('GEOMETRY_GEEKS_API_KEY')
     GEOMETRY_GEEKS_BASE_URL = 'https://api.geometrygeeks.bike/v1'
+    GEOMETRY_GEEKS_TIMEOUT = int(os.environ.get('GEOMETRY_GEEKS_TIMEOUT', '5'))
+    ENABLE_GEOMETRY_GEEKS = os.environ.get('ENABLE_GEOMETRY_GEEKS', 'True').lower() == 'true'
     
     # Shopify integration
     SHOPIFY_WEBHOOK_SECRET = os.environ.get('SHOPIFY_WEBHOOK_SECRET')
