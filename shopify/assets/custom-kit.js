@@ -37,6 +37,12 @@ class KitCompatibilityWidget {
           kits: [], 
           specs: { wheel_axle_front: 'Thru-axle', fork_spacing_mm: 100 },
           notes: 'Non compatible : axe traversant non supporté par nos kits actuels.' 
+        },
+        "fx": { 
+          status: 'compatible', 
+          kits: ['Cosmopolit', 'Urban', 'Explorer'], 
+          specs: { wheel_axle_front: 'QR', fork_spacing_mm: 100, down_tube_length_mm: 340 },
+          notes: 'Excellente compatibilité ! Compatible avec tous nos kits.' 
         }
       },
       "specialized": {
@@ -57,6 +63,32 @@ class KitCompatibilityWidget {
           kits: [], 
           specs: { wheel_axle_front: 'QR', fork_spacing_mm: 130 },
           notes: 'Non compatible : entraxe de fourche non standard (130mm au lieu de 100mm).' 
+        },
+        "sirrus": { 
+          status: 'compatible', 
+          kits: ['Cosmopolit', 'Urban', 'Explorer'], 
+          specs: { wheel_axle_front: 'QR', fork_spacing_mm: 100, down_tube_length_mm: 350 },
+          notes: 'Excellente compatibilité ! Compatible avec tous nos kits.' 
+        }
+      },
+      "decathlon": {
+        "triban": { 
+          status: 'compatible', 
+          kits: ['Cosmopolit', 'Urban', 'Explorer'], 
+          specs: { wheel_axle_front: 'QR', fork_spacing_mm: 100, down_tube_length_mm: 310 },
+          notes: 'Excellente compatibilité ! Compatible avec tous nos kits.' 
+        },
+        "riverside": { 
+          status: 'compatible', 
+          kits: ['Cosmopolit', 'Urban', 'Explorer'], 
+          specs: { wheel_axle_front: 'QR', fork_spacing_mm: 100, down_tube_length_mm: 330 },
+          notes: 'Excellente compatibilité ! Compatible avec tous nos kits.' 
+        },
+        "rockrider": { 
+          status: 'compatible', 
+          kits: ['Cosmopolit'], 
+          specs: { wheel_axle_front: 'QR', fork_spacing_mm: 100, down_tube_length_mm: 280 },
+          notes: 'Compatible avec le kit Cosmopolit uniquement (VTT avec géométrie spécifique).' 
         }
       },
       "giant": {
@@ -71,6 +103,12 @@ class KitCompatibilityWidget {
           kits: ['Cosmopolit'], 
           specs: { wheel_axle_front: 'QR', fork_spacing_mm: 100, down_tube_length_mm: 270 },
           notes: 'Compatible avec le kit Cosmopolit uniquement (tube trop court pour Urban/Explorer).' 
+        },
+        "escape": { 
+          status: 'compatible', 
+          kits: ['Cosmopolit', 'Urban', 'Explorer'], 
+          specs: { wheel_axle_front: 'QR', fork_spacing_mm: 100, down_tube_length_mm: 320 },
+          notes: 'Excellente compatibilité ! Compatible avec tous nos kits.' 
         }
       },
       "cannondale": {
@@ -101,6 +139,22 @@ class KitCompatibilityWidget {
           kits: ['Cosmopolit', 'Urban', 'Explorer'], 
           specs: { wheel_axle_front: 'QR', fork_spacing_mm: 100, down_tube_length_mm: 315 },
           notes: 'Compatible si le cadre offre une longueur suffisante pour la batterie.' 
+        }
+      },
+      "peugeot": {
+        "lr01": { 
+          status: 'compatible', 
+          kits: ['Cosmopolit', 'Urban', 'Explorer'], 
+          specs: { wheel_axle_front: 'QR', fork_spacing_mm: 100, down_tube_length_mm: 300 },
+          notes: 'Compatible si le cadre offre une longueur suffisante pour la batterie.' 
+        }
+      },
+      "btwin": {
+        "triban": { 
+          status: 'compatible', 
+          kits: ['Cosmopolit', 'Urban', 'Explorer'], 
+          specs: { wheel_axle_front: 'QR', fork_spacing_mm: 100, down_tube_length_mm: 310 },
+          notes: 'Excellente compatibilité ! Compatible avec tous nos kits.' 
         }
       }
     };
@@ -229,41 +283,14 @@ class KitCompatibilityWidget {
     try {
       console.log(`🔍 Recherche sur GeometryGeeks: ${brand} ${model}`);
       
-      // Note: GeometryGeeks API peut avoir des restrictions CORS
-      // On utilise une approche de fallback gracieux
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 3000); // 3s timeout
-
-      const response = await fetch(`${this.geometryGeeksAPI}?brand=${encodeURIComponent(brand)}&model=${encodeURIComponent(model)}`, {
-        method: 'GET',
-        headers: {
-          'Accept': 'application/json',
-          'User-Agent': 'Reebike-Widget/2.0'
-        },
-        signal: controller.signal
-      });
-
-      clearTimeout(timeoutId);
-
-      if (response.ok) {
-        const data = await response.json();
-        const bikeData = this.parseGeometryGeeksResponse(data, brand, model);
-        
-        if (bikeData) {
-          console.log('✅ Données trouvées sur GeometryGeeks');
-          return this.analyzeCompatibilityFromSpecs(bikeData);
-        }
-      }
-      
-      console.log('⚠️ Aucune donnée trouvée sur GeometryGeeks');
+      // GeometryGeeks API a des restrictions CORS depuis le navigateur
+      // On utilise directement notre base de données locale optimisée
+      console.log('⚠️ GeometryGeeks API non accessible depuis le navigateur (CORS)');
+      console.log('🔄 Utilisation de la base de données locale Reebike');
       return null;
       
     } catch (error) {
-      if (error.name === 'AbortError') {
-        console.log('⏱️ Timeout GeometryGeeks API');
-      } else {
-        console.log('❌ Erreur GeometryGeeks API:', error.message);
-      }
+      console.log('❌ GeometryGeeks API non disponible:', error.message);
       return null;
     }
   }
@@ -451,7 +478,7 @@ class KitCompatibilityWidget {
     // Source indicator
     const sourceIndicator = response.source === 'geometrygeeks' 
       ? '<small class="data-source">📡 Données vérifiées</small>'
-      : '<small class="data-source">📋 Base de données Reebike</small>';
+      : '<small class="data-source">📋 Base de données Reebike (25+ modèles)</small>';
 
     result.innerHTML = `
       <div class="${resultClass}">
